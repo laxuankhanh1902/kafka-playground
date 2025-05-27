@@ -58,7 +58,14 @@ kafka-topics --create \
 echo "Producing messages to my-topic..."
 kafka-producer-perf-test --producer-props bootstrap.servers=localhost:9092 retries=5 --record-size 10 --throughput 1  --num-records 10 --topic my-topic
 
-echo "Consuming messages from my-topic..."
+echo "Consuming messages from my-topic... using kafka-console-consumer"
+kafka-console-consumer \
+--bootstrap-server localhost:9092 \
+--topic my-topic \
+--from-beginning \
+--timeout-ms 3000
+
+echo "Consuming messages from my-topic... using kafka-console-share-consumer"
 kafka-console-share-consumer \
 --bootstrap-server localhost:9092 \
 --topic my-topic \
