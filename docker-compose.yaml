@@ -1,0 +1,166 @@
+services:
+  kafka1:
+    image: apache/kafka:4.0.0
+    hostname: kafka1
+    container_name: kafka1
+    ports:
+      - "9092:9092"
+    environment:
+      KAFKA_NODE_ID: 1
+      KAFKA_CONTROLLER_LISTENER_NAMES: "CONTROLLER"
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: "CONTROLLER:PLAINTEXT,INTERNAL:PLAINTEXT,EXTERNAL:PLAINTEXT"
+      KAFKA_LISTENERS: "INTERNAL://kafka1:29092,CONTROLLER://kafka1:29093,EXTERNAL://0.0.0.0:9092"
+      KAFKA_ADVERTISED_LISTENERS: "INTERNAL://kafka1:29092,EXTERNAL://localhost:9092"
+      KAFKA_INTER_BROKER_LISTENER_NAME: "INTERNAL"
+      KAFKA_CONTROLLER_QUORUM_VOTERS: "1@kafka1:29093,2@kafka2:29093,3@kafka3:29093"
+      KAFKA_PROCESS_ROLES: "broker,controller"
+      KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: false
+      CLUSTER_ID: "p0KPFA_mQb2ixdPbQXPblw"
+      #      KAFKA_METRIC_REPORTERS: 'io.conduktor.LoggingClientTelemetry'
+      #      KAFKA_METRIC_REPORTERS: 'io.conduktor.LoggingClientTelemetry,io.conduktor.KafkaClientTelemetry,io.conduktor.ClientOtlpMetricsReporter'
+#      CLASSPATH: '/tmp/kip-714-1.0.jar'
+      KAFKA_METRICS_TOPIC: 'kafka-metrics'
+      KAFKA_BROKER_ADDRESS: 'localhost:9092'
+      OTEL_EXPORTER_OTLP_ENDPOINT: 'otel-collector:4317'
+      KAFKA_SHARE_GROUPS_ENABLED: true
+      KAFKA_UNSTABLE_API_VERSIONS_ENABLE: true
+      KAFKA_GROUP_SHARE_ENABLE: true
+      KAFKA_GROUP_COORDINATOR_REBALANCE_PROTOCOLS: "classic,consumer,share"
+    healthcheck:
+      test: nc -zv kafka1 29092 || exit 1
+      interval: 5s
+      retries: 25
+
+  kafka2:
+    image: apache/kafka:4.0.0
+    hostname: kafka2
+    container_name: kafka2
+    ports:
+      - "9093:9093"
+    environment:
+      KAFKA_NODE_ID: 2
+      KAFKA_CONTROLLER_LISTENER_NAMES: "CONTROLLER"
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: "CONTROLLER:PLAINTEXT,INTERNAL:PLAINTEXT,EXTERNAL:PLAINTEXT"
+      KAFKA_LISTENERS: "INTERNAL://kafka2:29092,CONTROLLER://kafka2:29093,EXTERNAL://0.0.0.0:9093"
+      KAFKA_ADVERTISED_LISTENERS: "INTERNAL://kafka2:29092,EXTERNAL://localhost:9093"
+      KAFKA_INTER_BROKER_LISTENER_NAME: "INTERNAL"
+      KAFKA_CONTROLLER_QUORUM_VOTERS: "1@kafka1:29093,2@kafka2:29093,3@kafka3:29093"
+      KAFKA_PROCESS_ROLES: "broker,controller"
+      KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: false
+      CLUSTER_ID: "p0KPFA_mQb2ixdPbQXPblw"
+      #      KAFKA_METRIC_REPORTERS: 'io.conduktor.LoggingClientTelemetry'
+      #      KAFKA_METRIC_REPORTERS: 'io.conduktor.LoggingClientTelemetry,io.conduktor.KafkaClientTelemetry,io.conduktor.ClientOtlpMetricsReporter'
+#      CLASSPATH: '/tmp/kip-714-1.0.jar'
+      KAFKA_METRICS_TOPIC: 'kafka-metrics'
+      KAFKA_BROKER_ADDRESS: 'localhost:9092'
+      OTEL_EXPORTER_OTLP_ENDPOINT: 'otel-collector:4317'
+      KAFKA_SHARE_GROUPS_ENABLED: true
+      KAFKA_UNSTABLE_API_VERSIONS_ENABLE: true
+      KAFKA_GROUP_SHARE_ENABLE: true
+      KAFKA_GROUP_COORDINATOR_REBALANCE_PROTOCOLS: "classic,consumer,share"
+    healthcheck:
+      test: nc -zv kafka1 29092 || exit 1
+      interval: 5s
+      retries: 25
+
+  kafka3:
+    image: apache/kafka:4.0.0
+    hostname: kafka3
+    container_name: kafka3
+    ports:
+      - "9094:9094"
+    environment:
+      KAFKA_NODE_ID: 3
+      KAFKA_CONTROLLER_LISTENER_NAMES: "CONTROLLER"
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: "CONTROLLER:PLAINTEXT,INTERNAL:PLAINTEXT,EXTERNAL:PLAINTEXT"
+      KAFKA_LISTENERS: "INTERNAL://kafka3:29092,CONTROLLER://kafka3:29093,EXTERNAL://0.0.0.0:9094"
+      KAFKA_ADVERTISED_LISTENERS: "INTERNAL://kafka3:29092,EXTERNAL://localhost:9094"
+      KAFKA_INTER_BROKER_LISTENER_NAME: "INTERNAL"
+      KAFKA_CONTROLLER_QUORUM_VOTERS: "1@kafka1:29093,2@kafka2:29093,3@kafka3:29093"
+      KAFKA_PROCESS_ROLES: "broker,controller"
+      KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: false
+      CLUSTER_ID: "p0KPFA_mQb2ixdPbQXPblw"
+      #      KAFKA_METRIC_REPORTERS: 'io.conduktor.LoggingClientTelemetry'
+      #      KAFKA_METRIC_REPORTERS: 'io.conduktor.LoggingClientTelemetry,io.conduktor.KafkaClientTelemetry,io.conduktor.ClientOtlpMetricsReporter'
+#      CLASSPATH: '/tmp/kip-714-1.0.jar'
+      KAFKA_METRICS_TOPIC: 'kafka-metrics'
+      KAFKA_BROKER_ADDRESS: 'localhost:9092'
+      OTEL_EXPORTER_OTLP_ENDPOINT: 'otel-collector:4317'
+      KAFKA_SHARE_GROUPS_ENABLED: true
+      KAFKA_UNSTABLE_API_VERSIONS_ENABLE: true
+      KAFKA_GROUP_SHARE_ENABLE: true
+      KAFKA_GROUP_COORDINATOR_REBALANCE_PROTOCOLS: "classic,consumer,share"
+    healthcheck:
+      test: nc -zv kafka3 29092 || exit 1
+      interval: 5s
+      retries: 25
+
+#  gateway1:
+#    image: harbor.cdkt.dev/conduktor/conduktor-gateway:3.9.0-SNAPSHOT
+#    hostname: gateway1
+#    container_name: gateway1
+#    environment:
+#      KAFKA_BOOTSTRAP_SERVERS: kafka1:29092
+#      GATEWAY_ADVERTISED_HOST: localhost
+#      GATEWAY_SECURITY_PROTOCOL: PLAINTEXT
+#      GATEWAY_FEATURE_FLAGS_ANALYTICS: false
+#      GATEWAY_MIN_BROKERID: 1
+#      GATEWAY_USER_POOL_SECRET_KEY: changeitbutlongercauseweneed256key
+#    depends_on:
+#      kafka1:
+#        condition: service_healthy
+#    ports:
+#      - "6969:6969"
+#      - "6970:6970"
+#      - "6971:6971"
+#      - "6972:6972"
+#      - "6973:6973"
+#      - "6974:6974"
+#      - "8888:8888"
+#    healthcheck:
+#      test: curl localhost:8888/health
+#      interval: 5s
+#      retries: 25
+
+#  otel-collector:
+#    image: otel/opentelemetry-collector-contrib
+#    container_name: otel-collector
+#    hostname: otel-collector
+#    ports:
+#      - "4317:4317"
+#      - "8890:8890"
+#    volumes:
+#      - ./config/otel-collector/otel-collector-config.yaml:/etc/otelcol-contrib/config.yaml
+#    networks:
+#      - default
+#
+#  prometheus:
+#    image: prom/prometheus
+#    container_name: prometheus
+#    hostname: prometheus
+#    ports:
+#      - "9090:9090"
+#    volumes:
+#      - prometheus:/prometheus
+#      - ./config/prometheus/otel-collector-prometheus.yml:/etc/prometheus/prometheus.yml
+#    depends_on:
+#      - otel-collector
+#
+#  grafana:
+#    image: grafana/grafana
+#    container_name: grafana
+#    ports:
+#      - "3000:3000"
+#    environment:
+#      GF_SECURITY_ADMIN_USER: admin
+#      GF_SECURITY_ADMIN_PASSWORD: admin
+#    depends_on:
+#      - prometheus
+
+volumes:
+  kafka-data: {}
+  prometheus: { }
+  otel-collector: { }
