@@ -1,21 +1,34 @@
 package io.conduktor.queues;
 
-import org.apache.kafka.clients.consumer.ConsumerRecord;
-import org.apache.kafka.clients.consumer.ConsumerRecords;
-import org.apache.kafka.clients.consumer.KafkaShareConsumer;
+import org.apache.kafka.clients.consumer.*;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.time.Duration;
 import java.util.Collections;
+import java.util.Optional;
 import java.util.Properties;
+import java.util.UUID;
 
 public class BasicShareConsumer {
     public static void main(String[] args) {
         // Configure the consumer
         Properties props = new Properties();
-        props.put("bootstrap.servers", "localhost:9092");
-        props.put("group.id", "my-share-group");
+        props.put("bootstrap.servers", "localhost:6969");
+        props.put("group.id", "my-share-group" + UUID.randomUUID());
         props.put("key.deserializer", "org.apache.kafka.common.serialization.StringDeserializer");
         props.put("value.deserializer", "org.apache.kafka.common.serialization.StringDeserializer");
+        props.put("share.group." + ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
+        // Enable unstable APIs to access newer features like the queue protocol
+        props.put("unstable.api.versions.enable", "true");
+        // KIP-932 configuration for Kafka 4.0+
+        // Set the GROUP_PROTOCOL_CONFIG to CONSUMER for queue semantics
+        props.put(ConsumerConfig.GROUP_PROTOCOL_CONFIG, "CONSUMER");
+        // Process fewer records at a time for better load balancing
+        props.put(ConsumerConfig.MAX_POLL_RECORDS_CONFIG, "5");
+        // Use shorter poll intervals
+        props.put(ConsumerConfig.MAX_POLL_INTERVAL_MS_CONFIG, "5000");
+        props.put(ConsumerConfig.AUTO_COMMIT_INTERVAL_MS_CONFIG, "1000");
 
         // Create a KafkaShareConsumer instead of KafkaConsumer
         KafkaShareConsumer<String, String> consumer = new KafkaShareConsumer<>(props);
@@ -61,5 +74,25 @@ public class BasicShareConsumer {
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
         }
+    }
+
+    static ShareConsumer<String, String> createConsumer() throws IOException {
+        Properties propOverrides = new Properties();
+        propOverrides.put(ConsumerConfig.GROUP_ID_CONFIG, "share-consumer-group-frank");
+
+        // TODO: Can I read from the VERY Beginning of time for a topic?
+        propOverrides.put("share.group." + ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
+        // Enable unstable APIs to access newer features like the queue protocol
+        propOverrides.put("unstable.api.versions.enable", "true");
+        // KIP-932 configuration for Kafka 4.0+
+        // Set the GROUP_PROTOCOL_CONFIG to CONSUMER for queue semantics
+        propOverrides.put(ConsumerConfig.GROUP_PROTOCOL_CONFIG, "CONSUMER");
+        // Process fewer records at a time for better load balancing
+        propOverrides.put(ConsumerConfig.MAX_POLL_RECORDS_CONFIG, "5");
+        // Use shorter poll intervals
+        propOverrides.put(ConsumerConfig.MAX_POLL_INTERVAL_MS_CONFIG, "5000");
+        propOverrides.put(ConsumerConfig.AUTO_COMMIT_INTERVAL_MS_CONFIG, "1000");
+
+        return new KafkaShareConsumer<>(propOverrides);
     }
 }
