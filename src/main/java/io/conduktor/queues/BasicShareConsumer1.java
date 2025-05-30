@@ -3,14 +3,12 @@ package io.conduktor.queues;
 import org.apache.kafka.clients.consumer.*;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.time.Duration;
 import java.util.Collections;
-import java.util.Optional;
 import java.util.Properties;
 import java.util.UUID;
 
-public class BasicShareConsumer {
+public class BasicShareConsumer1 {
     public static void main(String[] args) {
         // Configure the consumer
         Properties props = new Properties();

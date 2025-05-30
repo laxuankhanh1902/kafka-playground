@@ -1,5 +1,6 @@
 package io.conduktor.kafkastreams;
 
+import org.apache.kafka.clients.admin.AdminClient;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.common.metrics.KafkaMetric;
 import org.apache.kafka.common.serialization.Serdes;
@@ -54,6 +55,20 @@ public class KafkaStreamsExample {
             }
         });
         streams.start();
+
+        var a = AdminClient.create(props);
+        a.describeShareGroups(List.of("")).all().whenComplete((result, exception) -> {
+            if (exception != null) {
+                System.err.println("Error describing share groups: " + exception.getMessage());
+            } else {
+                result.forEach((groupId, description) -> {
+                    System.out.println("Share group: " + groupId);
+                    description.members().forEach(member -> {
+                        System.out.println("  Member: " + member.consumerId() + ", host: " + member.host());
+                    });
+                });
+            }
+        });
 
         var metricsList = streams.metrics().entrySet().stream()
                 .filter(entry -> entry.getKey().group().equals("stream-metrics"))

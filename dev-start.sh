@@ -99,3 +99,21 @@ curl 'http://localhost:8888/gateway/v2/interceptor' \
     }
   }'
 
+
+kafka-console-consumer \
+  --bootstrap-server localhost:9092 \
+  --property print.key=true \
+  --topic __share_group_state \
+  --from-beginning \
+  --formatter=org.apache.kafka.tools.consumer.group.share.ShareGroupStateMessageFormatter \
+  --consumer-property group.id=my-debug-consumer
+
+kafka-consumer-groups --bootstrap-server localhost:9092 --describe --group <group_name>
+
+#List all share groups
+kafka-share-groups --bootstrap-server localhost:9092 --list
+
+#Interate over all share groups and describe them
+kafka-share-groups --bootstrap-server localhost:9092 --describe --group <group_name>
+
+#kafka-share-groups --bootstrap-server localhost:9092 --describe --group my-share-group --members
