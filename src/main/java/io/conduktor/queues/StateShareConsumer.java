@@ -20,7 +20,7 @@ public class StateShareConsumer {
         // Configure the consumer
         Properties props = new Properties();
         props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:9092");
-        props.put(ConsumerConfig.GROUP_ID_CONFIG, "share-group-state-reader");
+        props.put(ConsumerConfig.GROUP_ID_CONFIG, "share-group-state-reader-" + UUID.randomUUID());
         props.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
         props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, ByteArrayDeserializer.class.getName());
         props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, ByteArrayDeserializer.class.getName());
@@ -37,7 +37,7 @@ public class StateShareConsumer {
                 for (ConsumerRecord<byte[], byte[]> record : records) {
                     ByteArrayOutputStream out = new ByteArrayOutputStream();
                     formatter.writeTo(record, new PrintStream(out));
-                    System.out.println(out.toString().trim()); // 🔥 print the formatted result
+                    System.out.println(out.toString().trim());
                 }
             }
         } catch (Exception e) {
